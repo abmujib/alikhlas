@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Al-Ikhlas - Laporan Keuangan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    
+    <style>
+        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        .report-header { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 30px; }
+        .table-card { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .filter-section { background: #e9ecef; border-radius: 10px; padding: 15px; margin-bottom: 20px; }
+        /* Memastikan footer terlihat rapi saat dicetak */
+        .table tfoot th { border-top: 2px solid #dee2e6 !important; vertical-align: middle; }
+        @media print { .no-print { display: none !important; } }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4 no-print">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.html"><i class="fa-solid fa-arrow-left me-2"></i>KEMBALI KE DASHBOARD</a>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <div class="report-header text-center text-md-start">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <h2 class="fw-bold mb-0 text-primary">LAPORAN KEUANGAN MASJID</h2>
+                    <p class="text-muted mb-0">Masjid Al-Ikhlas - Transparansi Dana Umat</p>
+                </div>
+                <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                    <div class="p-3 bg-light border rounded shadow-sm">
+                        <small class="text-muted d-block fw-bold">SALDO AKHIR TERFILTER</small>
+                        <h3 class="fw-bold mb-0" id="filterTotal">Rp 0</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <div class="filter-section no-print">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold">Jenis</label>
+                        <select id="filterJenis" class="form-select border-0 shadow-sm">
+                            <option value="">Semua Jenis</option>
+                            <option value="pemasukan">Pemasukan (In)</option>
+                            <option value="pengeluaran">Pengeluaran (Out)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label small fw-bold">Kategori</label>
+                        <select id="filterKategori" class="form-select border-0 shadow-sm">
+                            <option value="">Semua Kategori</option>
+                            <option value="Kotak Amal">Kotak Amal</option>
+                            <option value="Infaq">Infaq</option>
+                            <option value="Iuran">Iuran</option>
+                            <option value="Operasional">Operasional</option>
+                            <option value="Pemeliharaan">Pemeliharaan</option>
+                            <option value="Lainnya">Lainnya</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <button onclick="loadDataLaporan()" class="btn btn-primary w-100 shadow-sm fw-bold">
+                            <i class="fa fa-sync me-2"></i>REFRESH DATA
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table id="reportTable" class="table table-hover w-100 align-middle">
+                    <thead class="table-primary text-white">
+                        <tr>
+                            <th>TANGGAL</th>
+                            <th>JENIS</th>
+                            <th>KATEGORI</th>
+                            <th class="text-end">NOMINAL</th>
+                            <th>KETERANGAN</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tfoot class="fw-bold">
+                        <tr>
+                            <th colspan="3" class="text-end">TOTAL SALDO:</th>
+                            <th id="footerTotal" class="text-end">Rp 0</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
+        let table;
+
+        $(document).ready(function() {
+            table = $('#reportTable').DataTable({
+                dom: '<"d-flex justify-content-between no-print mb-3"Bf>rtip',
+                buttons: [
+                    { extend: 'excel', className: 'btn btn-success btn-sm', footer: true, text: 'Excel' },
+                    { extend: 'pdf', className: 'btn btn-danger btn-sm', footer: true, text: 'PDF' },
+                    { extend: 'print', className: 'btn btn-dark btn-sm', footer: true, text: 'Cetak' }
+                ],
+                order: [[0, 'desc']],
+                language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json" },
+                footerCallback: function (row, data, start, end, display) {
+                    let api = this.api();
+                    let total = api.rows({ filter: 'applied' }).data().toArray().reduce(function (a, b) {
+                        let jenis = b[1];
+                        let nominal = parseInt(b[3]) || 0;
+                        return jenis === 'pemasukan' ? a + nominal : a - nominal;
+                    }, 0);
+
+                    $(api.column(3).footer()).html(formatRupiah(total));
+                    $("#filterTotal").text(formatRupiah(total));
+                    $("#filterTotal").removeClass('text-success text-danger').addClass(total >= 0 ? 'text-success' : 'text-danger');
+                }
+            });
+
+            loadDataLaporan();
+
+            $('#filterJenis, #filterKategori').on('change', function() {
+                table.column(1).search($('#filterJenis').val())
+                     .column(2).search($('#filterKategori').val())
+                     .draw();
+            });
+        });
+
+        function loadDataLaporan() {
+            fetch(scriptURL)
+                .then(res => res.json())
+                .then(data => {
+                    table.clear();
+                    data.forEach(t => {
+                        table.row.add([t.tanggal, t.jenis, t.kategori, t.nominal, t.keterangan || '-']);
+                    });
+
+                    table.rows().every(function() {
+                        let d = this.data();
+                        let isInc = d[1] === 'pemasukan';
+                        this.node().cells[0].innerHTML = `<small>${formatTglTabel(d[0])}</small>`;
+                        this.node().cells[1].innerHTML = `<span class="badge ${isInc ? 'bg-success' : 'bg-danger'}">${d[1].toUpperCase()}</span>`;
+                        this.node().cells[3].innerHTML = `<span class="${isInc ? 'text-success' : 'text-danger'} fw-bold text-end d-block">${formatRupiah(d[3])}</span>`;
+                    });
+
+                    table.draw();
+                });
+        }
+
+        // Memperbaiki tampilan tanggal ISO agar manusiawi
+        function formatTglTabel(isoString) {
+            if (!isoString) return "-";
+            let d = new Date(isoString);
+            return d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        function formatRupiah(n) {
+            return "Rp " + Math.abs(n).toLocaleString('id-ID');
+        }
+
+        // Mencegah error "resetForm is not defined"
+        function resetForm() {
+            console.log("Form reset call handled.");
+        }
+    </script>
+</body>
+</html>
