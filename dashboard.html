@@ -7,6 +7,7 @@
     <title>Al-Ikhlas - Dashboard Keuangan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
@@ -67,7 +68,7 @@
     </nav>
 
     <div class="container">
-<div class="row g-3 mb-4">
+        <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <div class="card stat-card bg-income p-3">
                     <div class="d-flex justify-content-between">
@@ -149,19 +150,16 @@
                 <div class="table-container shadow-sm">
                     <h5 class="fw-bold mb-3">Riwayat Transaksi</h5>
                     <div class="table-responsive">
-                        <table class="table table-hover">
+                        <table id="mainTable" class="table table-hover w-100">
                             <thead>
                                 <tr>
                                     <th>Tanggal</th>
-                                    <th>Info</th>
+                                    <th>Kategori</th>
                                     <th>Nominal</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="transactionList">
-                                <tr>
-                                    <td colspan="4" class="text-center">Memuat data...</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -172,11 +170,24 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
+        let table; // Variabel global untuk DataTable
 
         $(document).ready(function() {
+            // Inisialisasi DataTable pertama kali
+            table = $('#mainTable').DataTable({
+                "order": [
+                    [0, "desc"]
+                ], // Urutkan berdasarkan tanggal terbaru
+                "pageLength": 10,
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json" // Bahasa Indonesia
+                }
+            });
             loadData();
         });
 
@@ -184,7 +195,9 @@
             fetch(scriptURL)
                 .then(res => res.json())
                 .then(data => {
-                    let list = $("#transactionList").empty();
+                    // Hapus data lama di DataTable
+                    table.clear();
+
                     let totalIn = 0,
                         totalOut = 0;
 
@@ -194,26 +207,27 @@
                         if (isInc) totalIn += nom;
                         else totalOut += nom;
 
-                        list.append(`
-                        <tr>
-                            <td><small>${formatTglTabel(t.tanggal)}</small></td>
-                            <td>
-                                <b>${t.kategori}</b><br>
-                                <small class="text-muted">${t.keterangan || '-'}</small>
-                            </td>
-                            <td class="${isInc ? 'text-success' : 'text-danger'} fw-bold">
-                                ${formatRupiah(nom)}
-                            </td>
-                            <td>
-                                <button class="btn btn-sm btn-light text-primary me-1" onclick="prepareEdit('${t.id}','${t.tanggal}','${t.jenis}','${t.kategori}','${nom}','${t.keterangan}')"><i class="fa fa-edit"></i></button>
-                                <button class="btn btn-sm btn-light text-danger" onclick="deleteItem('${t.id}')"><i class="fa fa-trash"></i></button>
-                            </td>
-                        </tr>`);
+                        // Tambahkan baris ke DataTable
+                        table.row.add([
+                            `<small>${formatTglTabel(t.tanggal)}</small>`,
+                            `<b>${t.kategori}</b><br><small class="text-muted">${t.keterangan || '-'}</small>`,
+                            `<span class="${isInc ? 'text-success' : 'text-danger'} fw-bold">${formatRupiah(nom)}</span>`,
+                            `<div class="btn-group">
+                            <button class="btn btn-sm btn-light text-primary" onclick="prepareEdit('${t.id}','${t.tanggal}','${t.jenis}','${t.kategori}','${nom}','${t.keterangan}')"><i class="fa fa-edit"></i></button>
+                            <button class="btn btn-sm btn-light text-danger" onclick="deleteItem('${t.id}')"><i class="fa fa-trash"></i></button>
+                        </div>`
+                        ]);
                     });
+
+                    // Gambar ulang tabel dengan data baru
+                    table.draw();
+
+                    // Update Ringkasan Saldo
                     $("#totalPemasukan").text(formatRupiah(totalIn));
                     $("#totalPengeluaran").text(formatRupiah(totalOut));
                     $("#totalSaldo").text(formatRupiah(totalIn - totalOut));
-                });
+                })
+                .catch(err => console.error("Error loading data:", err));
         }
 
         $("#financeForm").on("submit", function(e) {
