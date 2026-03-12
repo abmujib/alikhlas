@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,21 +8,39 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body class="bg-gray-50 text-gray-800">
 
-    <nav class="bg-green-700 text-white p-4 sticky top-0 z-50 shadow-md">
+    <nav class="bg-green-700 text-white p-3 sticky top-0 z-50 shadow-lg">
         <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-wide">MASJID AL IKHLAS</h1>
-            <ul class="hidden md:flex space-x-6">
-                <li><a href="#beranda" class="hover:text-green-200">Beranda</a></li>
-                <li><a href="#jadwal" class="hover:text-green-200">Jadwal Shalat</a></li>
-                <li><a href="#kegiatan" class="hover:text-green-200">Kegiatan</a></li>
-                <li><a href="#kontak" class="hover:text-green-200">Kontak</a></li>
+            <a href="#beranda" class="flex items-center space-x-3 group">
+                <div class="p-1 rounded-full shadow-sm group-hover:scale-105 transition-transform duration-300">
+                    <img src="logo.png" alt="Logo Masjid" class="w-10 h-10 object-contain" />
+                </div>
+                <div class="flex flex-col leading-tight">
+                    <span class="text-lg md:text-xl font-black tracking-tighter">MASJID AL IKHLAS</span>
+                    <span class="text-[10px] md:text-xs font-light tracking-[0.2em] uppercase text-green-200">Cikontrang - Sukabumi</span>
+                </div>
+            </a>
+
+            <ul class="hidden md:flex items-center space-x-8 font-medium">
+                <li>
+                    <a href="#beranda" class="relative hover:text-green-200 transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-200 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all after:duration-300">Beranda</a>
+                </li>
+                <li>
+                    <a href="#jadwal" class="relative hover:text-green-200 transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-200 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all after:duration-300">Jadwal Shalat</a>
+                </li>
+                <li>
+                    <a href="#kegiatan" class="relative hover:text-green-200 transition-colors duration-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-200 after:left-0 after:-bottom-1 hover:after:w-full after:transition-all after:duration-300">Kegiatan</a>
+                </li>
+                <li>
+                    <a href="#kontak" class="bg-white text-green-700 px-4 py-2 rounded-full font-bold hover:bg-green-100 transition-colors shadow-sm">Kontak</a>
+                </li>
             </ul>
         </div>
     </nav>
 
-    <header id="beranda" class="relative h-[60vh] flex items-center justify-center text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1542621334-a254cf47733d?auto=format&fit=crop&w=1200&q=80');">
+    <header id="beranda" class="relative h-[60vh] flex items-center justify-center text-center bg-cover bg-center" style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('masjid-alikhlas-cikontrang.png');">
         <div class="text-white px-4">
             <h2 class="text-4xl md:text-5xl font-extrabold mb-4">Masjid Al Ikhlas Cikontrang</h2>
             <p class="text-lg md:text-xl max-w-2xl mx-auto italic">"Pusat Ibadah, Pembinaan Umat, dan Kebajikan di Wilayah Cikontrang"</p>
@@ -29,31 +48,43 @@
     </header>
 
     <main class="container mx-auto py-12 px-4">
-        
+
         <section id="jadwal" class="mb-16">
-            <h3 class="text-2xl font-bold text-center mb-8 text-green-800 underline decoration-2 underline-offset-8">Jadwal Shalat</h3>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
-                <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
-                    <p class="text-sm text-gray-500 uppercase">Subuh</p>
-                    <p class="text-2xl font-bold">04:35</p>
+            <h3 class="text-2xl font-bold text-center mb-2 text-green-800 decoration-2 underline-offset-8">Jadwal Shalat</h3>
+            <p id="tgl-sekarang" class="text-center text-gray-500 mb-8 font-medium italic">Memuat tanggal...</p>
+
+            <div id="loading-spinner" class="text-center py-10">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-700"></div>
+                <p class="mt-2 text-green-700">Mengambil data...</p>
+            </div>
+
+            <div id="grid-jadwal" class="hidden grid grid-cols-2 md:grid-cols-6 gap-4 text-center">
+                <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-orange-500">
+                    <p class="text-xs text-gray-500 uppercase font-bold">Imsak</p>
+                    <p id="sholat-imsak" class="text-2xl font-black text-orange-600">--:--</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
-                    <p class="text-sm text-gray-500 uppercase">Dzuhur</p>
-                    <p class="text-2xl font-bold">11:58</p>
+                    <p class="text-xs text-gray-500 uppercase">Subuh</p>
+                    <p id="sholat-subuh" class="text-2xl font-bold">--:--</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
-                    <p class="text-sm text-gray-500 uppercase">Ashar</p>
-                    <p class="text-2xl font-bold">15:10</p>
+                    <p class="text-xs text-gray-500 uppercase">Dzuhur</p>
+                    <p id="sholat-dzuhur" class="text-2xl font-bold">--:--</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
-                    <p class="text-sm text-gray-500 uppercase">Maghrib</p>
-                    <p class="text-2xl font-bold">18:05</p>
+                    <p class="text-xs text-gray-500 uppercase">Ashar</p>
+                    <p id="sholat-ashar" class="text-2xl font-bold">--:--</p>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
-                    <p class="text-sm text-gray-500 uppercase">Isya</p>
-                    <p class="text-2xl font-bold">19:15</p>
+                    <p class="text-xs text-gray-500 uppercase">Maghrib</p>
+                    <p id="sholat-maghrib" class="text-2xl font-bold">--:--</p>
+                </div>
+                <div class="bg-white p-4 rounded-xl shadow-sm border-b-4 border-green-600">
+                    <p class="text-xs text-gray-500 uppercase">Isya</p>
+                    <p id="sholat-isya" class="text-2xl font-bold">--:--</p>
                 </div>
             </div>
+            <p class="text-center text-[10px] text-gray-400 mt-4 italic">*Sumber: Kemenag RI (Kab. Sukabumi)</p>
         </section>
 
         <section id="kegiatan" class="mb-16">
@@ -61,14 +92,14 @@
             <div class="grid md:grid-cols-3 gap-8">
                 <div class="bg-white rounded-lg overflow-hidden shadow-md">
                     <div class="p-6">
-                        <h4 class="font-bold text-xl mb-2 text-green-700">Kajian Mingguan</h4>
-                        <p class="text-gray-600">Setiap Sabtu malam ba'da Isya membahas kitab Riyadhus Shalihin.</p>
+                        <h4 class="font-bold text-xl mb-2 text-green-700">Kajian Bulanan</h4>
+                        <p class="text-gray-600">Setiap hari Minggu malam Senin ba'da Magrib awal Bulan Hijriah.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg overflow-hidden shadow-md">
                     <div class="p-6">
                         <h4 class="font-bold text-xl mb-2 text-green-700">TPA Anak</h4>
-                        <p class="text-gray-600">Senin - Kamis pukul 16.00 WIB untuk anak-anak sekitar Cikontrang.</p>
+                        <p class="text-gray-600">Setip hari pukul 18.30 WIB untuk anak-anak sekitar Cikontrang.</p>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg overflow-hidden shadow-md">
@@ -80,25 +111,98 @@
             </div>
         </section>
 
+        <section id="fasilitas" class="mb-16">
+            <h3 class="text-2xl font-bold text-center mb-8 text-green-800">Fasilitas Masjid</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-4 text-2xl">
+                        <i class="fas fa-mosque"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-700">Ruang Utama</h4>
+                    <p class="text-xs text-gray-500 mt-1">Area ibadah yang luas dan sejuk</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 text-green-700 rounded-full flex items-center justify-center mb-4 text-2xl">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-700">Majlis Taklim</h4>
+                    <p class="text-xs text-gray-500 mt-1">Pusat kajian dan musyawarah</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 text-blue-700 rounded-full flex items-center justify-center mb-4 text-2xl">
+                        <i class="fas fa-person"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-700">Toilet Pria</h4>
+                    <p class="text-xs text-gray-500 mt-1">Bersih & area wudhu terpisah</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center hover:shadow-md transition-shadow">
+                    <div class="w-16 h-16 bg-pink-100 text-pink-700 rounded-full flex items-center justify-center mb-4 text-2xl">
+                        <i class="fas fa-person-dress"></i>
+                    </div>
+                    <h4 class="font-bold text-gray-700">Toilet Wanita</h4>
+                    <p class="text-xs text-gray-500 mt-1">Privasi terjaga & nyaman</p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <footer id="kontak" class="bg-gray-800 text-white py-10 px-4">
         <div class="container mx-auto grid md:grid-cols-2 gap-8">
             <div>
                 <h4 class="text-xl font-bold mb-4">Lokasi</h4>
-                <p class="text-gray-400">Jl. Cikontrang No. XX, Desa/Kelurahan,</p>
-                <p class="text-gray-400">Kecamatan, Kota/Kabupaten.</p>
+                <p class="text-gray-400">Jl. Cikontrang RT. 003 RW. 005, Citamiang, Purabaya, Kabupaten Sukabumi</p>
+                <p class="text-gray-400">Jawa Barat, Indonesia.</p>
             </div>
             <div>
                 <h4 class="text-xl font-bold mb-4">Hubungi Kami</h4>
-                <p class="text-gray-400 mb-2"><i class="fab fa-whatsapp mr-2"></i> +62 812-3456-7890</p>
-                <p class="text-gray-400"><i class="far fa-envelope mr-2"></i> masjid.alikhlas.cikontrang@gmail.com</p>
+                <p class="text-gray-400 mb-2"><i class="fab fa-whatsapp mr-2"></i> 0851-1141-8844</p>
+                <p class="text-gray-400"><i class="far fa-envelope mr-2"></i> masjidalikhlascikontrang@gmail.com</p>
             </div>
         </div>
         <div class="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
-            &copy; 2024 Masjid Al Ikhlas Cikontrang. All Rights Reserved.
+            &copy; 2026 <b>Masjid Al Ikhlas Cikontrang</b>. All Rights Reserved.
         </div>
     </footer>
 
+    <script>
+        async function fetchJadwal() {
+            const urlV3 = "https://api.myquran.com/v3/sholat/jadwal/8f85517967795eeef66c225f7883bdcb/today?tz=Asia%2FJakarta";
+
+            try {
+                const response = await fetch(urlV3);
+                const result = await response.json();
+
+                if (result.status && result.data.jadwal) {
+                    const data = Object.values(result.data.jadwal)[0];
+
+                    // Masukkan ke elemen HTML
+                    document.getElementById('tgl-sekarang').innerText = data.tanggal;
+                    document.getElementById('sholat-imsak').innerText = data.imsak;
+                    document.getElementById('sholat-subuh').innerText = data.subuh;
+                    document.getElementById('sholat-dzuhur').innerText = data.dzuhur;
+                    document.getElementById('sholat-ashar').innerText = data.ashar;
+                    document.getElementById('sholat-maghrib').innerText = data.maghrib;
+                    document.getElementById('sholat-isya').innerText = data.isya;
+
+                    // Sembunyikan loading dan tampilkan grid
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                    const grid = document.getElementById('grid-jadwal');
+                    grid.classList.remove('hidden');
+                    grid.classList.add('grid');
+                }
+            } catch (error) {
+                console.error("Gagal memuat JSON V3:", error);
+                document.getElementById('loading-spinner').innerHTML =
+                    "<p class='text-red-600 font-bold text-sm'>Gagal sinkronisasi jadwal.</p>";
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchJadwal);
+    </script>
 </body>
+
 </html>
