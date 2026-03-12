@@ -165,7 +165,6 @@
                     let totalIn = 0, totalOut = 0;
 
                     data.forEach(t => {
-                        // Perbaikan: Gunakan huruf kapital sesuai isi Google Sheets
                         let isInc = t.jenis.toString().toUpperCase() === 'PEMASUKAN'; 
                         let nom = parseInt(t.nominal) || 0;
 
@@ -186,7 +185,9 @@
                     table.draw();
                     $("#totalPemasukan").text(formatRupiah(totalIn));
                     $("#totalPengeluaran").text(formatRupiah(totalOut));
-                    $("#totalSaldo").text(formatRupiah(totalIn - totalOut));
+                    
+                    // PERBAIKAN: Menggunakan formatSaldo untuk mendukung nilai negatif
+                    $("#totalSaldo").text(formatSaldo(totalIn - totalOut));
                 })
                 .catch(err => console.error("Error loading data:", err));
         }
@@ -269,7 +270,15 @@
             });
         }
 
+        // Fungsi format standar (pemasukan/pengeluaran selalu positif)
         function formatRupiah(n) { return "Rp " + Math.abs(n).toLocaleString('id-ID'); }
+
+        // Fungsi KHUSUS SALDO: Menampilkan tanda minus (-) jika hasil negatif
+        function formatSaldo(n) {
+            let prefix = n < 0 ? "- Rp " : "Rp ";
+            return prefix + Math.abs(n).toLocaleString('id-ID');
+        }
+
         function formatTglTabel(s) { return s ? new Date(s).toLocaleDateString('id-ID') : "-"; }
     </script>
 </body>
