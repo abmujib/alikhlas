@@ -72,7 +72,7 @@
     </div>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwGLK1bnQ-lIBHSAmVLYGTpQxxgShd9A9iOKqUMH-CPQ_wF01HUg5eqB-2NjvPatl3c/exec";
+        const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
 
         // Cek jika sudah login, langsung lempar ke pelanggan.html
         if (localStorage.getItem("token")) {
@@ -95,10 +95,21 @@
                 .then(res => res.json())
                 .then(response => {
                     if (response.status === "success") {
+                        // Simpan semua data krusial ke penyimpanan lokal
                         localStorage.setItem("token", response.token);
+                        localStorage.setItem("role", response.role);
                         localStorage.setItem("username", formData.get("username"));
-                        localStorage.setItem("nama_lengkap", response.teknisi);
-                        window.location.href = "pelanggan.html";
+                        localStorage.setItem("nama_lengkap", response.nama);
+
+                        // Arahkan otomatis berdasarkan Role dari Spreadsheet
+                        if (response.role === "Admin") {
+                            window.location.href = "dashboard.html";
+                        } else if (response.role === "Bendahara") {
+                            window.location.href = "transaksi.html";
+                        } else {
+                            // Ketua dan Umum langsung ke laporan
+                            window.location.href = "laporan.html";
+                        }
                     } else {
                         btn.disabled = false;
                         btn.innerText = "Login";

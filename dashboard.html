@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Al-Ikhlas - Dashboard Keuangan</title>
+    <title>Al-Ikhlas - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="auth.js"></script>
     <style>
         body {
             background: #f4f7f6;
@@ -59,9 +60,9 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#"><i class="fa-solid fa-mosque me-2"></i>AL-IKHLAS</a>
+            <a class="navbar-brand fw-bold" href="dashboard.html"><i class="fa-solid fa-mosque me-2"></i>AL-IKHLAS</a>
             <div class="ms-auto">
-                <span class="text-white me-3"><i class="fa-solid fa-user-circle me-1"></i> <span id="userNameDisplay">Admin</span></span>
+                <span class="text-white me-3"><i class="fa-solid fa-user-circle me-1"></i> <span id="welcomeText">Admin</span></span>
                 <button onclick="logout()" class="btn btn-sm btn-outline-light">Logout</button>
             </div>
         </div>
@@ -104,68 +105,15 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card shadow-sm p-4">
-                    <h5 class="fw-bold mb-3" id="formTitle">Catat Transaksi</h5>
-                    <form id="financeForm">
-                        <input type="hidden" id="transId">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Tanggal</label>
-                            <input type="date" class="form-control" id="tanggal" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Jenis</label>
-                            <select class="form-select" id="jenis" required>
-                                <option value="pemasukan">Pemasukan (In)</option>
-                                <option value="pengeluaran">Pengeluaran (Out)</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Kategori</label>
-                            <select class="form-select" id="kategori" required>
-                                <option value="Kotak Amal">Kotak Amal</option>
-                                <option value="Infaq">Infaq</option>
-                                <option value="Iuran">Iuran</option>
-                                <option value="Operasional">Operasional</option>
-                                <option value="Pemeliharaan">Pemeliharaan</option>
-                                <option value="Lainnya">Lainnya</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Nominal (Rp)</label>
-                            <input type="number" class="form-control" id="nominal" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Keterangan</label>
-                            <textarea class="form-control" id="keterangan" rows="2"></textarea>
-                        </div>
-                        <button type="submit" id="submitBtn" class="btn btn-primary w-100 btn-action">SIMPAN DATA</button>
-                        <button type="button" id="cancelBtn" class="btn btn-secondary w-100 mt-2 btn-action d-none" onclick="resetForm()">BATAL EDIT</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="col-md-8">
-                <div class="table-container shadow-sm">
-                    <h5 class="fw-bold mb-3">Riwayat Transaksi</h5>
-                    <div class="table-responsive">
-                        <table id="mainTable" class="table table-hover w-100">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>Kategori</th>
-                                    <th>Nominal</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="transactionList">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="p-3 bg-white rounded shadow-sm d-flex gap-3 justify-content-center">
+            <a href="transaksi.html" class="btn btn-primary btn-lg px-3 fw-bold">
+                <i class="fa-solid fa-plus-circle me-2"></i>Transaksi
+            </a>
+            <a href="laporan.html" class="btn btn-outline-dark btn-lg px-3 fw-bold">
+                <i class="fa-solid fa-file-lines me-2"></i>Laporan
+            </a>
         </div>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -206,23 +154,10 @@
                         let nom = parseInt(t.nominal) || 0;
                         if (isInc) totalIn += nom;
                         else totalOut += nom;
-
-                        // Tambahkan baris ke DataTable
-                        table.row.add([
-                            `<small>${formatTglTabel(t.tanggal)}</small>`,
-                            `<b>${t.kategori}</b><br><small class="text-muted">${t.keterangan || '-'}</small>`,
-                            `<span class="${isInc ? 'text-success' : 'text-danger'} fw-bold">${formatRupiah(nom)}</span>`,
-                            `<div class="btn-group">
-                            <button class="btn btn-sm btn-light text-primary" onclick="prepareEdit('${t.id}','${t.tanggal}','${t.jenis}','${t.kategori}','${nom}','${t.keterangan}')"><i class="fa fa-edit"></i></button>
-                            <button class="btn btn-sm btn-light text-danger" onclick="deleteItem('${t.id}')"><i class="fa fa-trash"></i></button>
-                        </div>`
-                        ]);
                     });
 
-                    // Gambar ulang tabel dengan data baru
                     table.draw();
 
-                    // Update Ringkasan Saldo
                     $("#totalPemasukan").text(formatRupiah(totalIn));
                     $("#totalPengeluaran").text(formatRupiah(totalOut));
                     $("#totalSaldo").text(formatRupiah(totalIn - totalOut));
@@ -230,110 +165,8 @@
                 .catch(err => console.error("Error loading data:", err));
         }
 
-        $("#financeForm").on("submit", function(e) {
-            e.preventDefault();
-            let action = $("#transId").val() ? "update" : "insert";
-            let btn = $("#submitBtn").prop('disabled', true).text("Memproses...");
-
-            let payload = {
-                action: action,
-                id: $("#transId").val(),
-                tanggal: $("#tanggal").val(),
-                jenis: $("#jenis").val(),
-                kategori: $("#kategori").val(),
-                nominal: $("#nominal").val(),
-                keterangan: $("#keterangan").val()
-            };
-
-            fetch(scriptURL, {
-                    method: "POST",
-                    mode: "no-cors",
-                    headers: {
-                        "Content-Type": "text/plain"
-                    },
-                    body: JSON.stringify(payload)
-                })
-                .then(() => {
-                    Swal.fire("Berhasil", "Data sedang diproses ke server", "success");
-                    resetForm();
-                    setTimeout(loadData, 2000);
-                })
-                .catch(err => {
-                    console.error(err);
-                    Swal.fire("Error", "Gagal menghubungi server", "error");
-                    btn.prop('disabled', false).text("SIMPAN DATA");
-                });
-        });
-
-        function prepareEdit(id, tgl, jenis, kat, nom, ket) {
-            $("#transId").val(id);
-
-            // Perbaikan Format Tanggal ISO ke YYYY-MM-DD
-            let formattedDate = tgl;
-            if (tgl.includes("T")) {
-                formattedDate = tgl.split("T")[0];
-            }
-
-            $("#tanggal").val(formattedDate);
-            $("#jenis").val(jenis);
-            $("#kategori").val(kat);
-            $("#nominal").val(nom);
-            $("#keterangan").val(ket);
-
-            $("#formTitle").text("Edit Transaksi");
-            $("#submitBtn").text("UPDATE DATA").addClass("btn-warning");
-            $("#cancelBtn").removeClass("d-none");
-            window.scrollTo(0, 0);
-        }
-
-        function resetForm() {
-            $("#financeForm")[0].reset();
-            $("#transId").val("");
-            $("#formTitle").text("Catat Transaksi");
-            $("#submitBtn").text("SIMPAN DATA").removeClass("btn-warning").prop('disabled', false);
-            $("#cancelBtn").addClass("d-none");
-        }
-
-        function deleteItem(id) {
-            Swal.fire({
-                title: "Hapus data ini?",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: '#dc3545'
-            }).then(r => {
-                if (r.isConfirmed) {
-                    fetch(scriptURL, {
-                            method: "POST",
-                            mode: "no-cors",
-                            headers: {
-                                "Content-Type": "text/plain"
-                            },
-                            body: JSON.stringify({
-                                action: "delete",
-                                id: id
-                            })
-                        })
-                        .then(() => {
-                            Swal.fire("Dihapus", "Data dalam proses penghapusan", "success");
-                            setTimeout(loadData, 2000);
-                        });
-                }
-            });
-        }
-
         function formatRupiah(n) {
             return "Rp " + Math.abs(n).toLocaleString('id-ID');
-        }
-
-        function formatTglTabel(s) {
-            if (!s) return "-";
-            let d = new Date(s);
-            return d.toLocaleDateString('id-ID');
-        }
-
-        function logout() {
-            localStorage.clear();
-            window.location.reload();
         }
     </script>
 </body>
