@@ -7,52 +7,22 @@
     <title>SIMKEU Al Ikhlas - Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="auth.js"></script>
+
     <style>
-        body {
-            background: #f4f7f6;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .card {
-            border-radius: 15px;
-            border: none;
-        }
-
-        .stat-card {
-            color: white;
-            transition: 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .bg-income {
-            background: linear-gradient(45deg, #28a745, #85e085);
-        }
-
-        .bg-expense {
-            background: linear-gradient(45deg, #dc3545, #ff6b6b);
-        }
-
-        .bg-balance {
-            background: linear-gradient(45deg, #007bff, #66b2ff);
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-action {
-            border-radius: 10px;
-            font-weight: 600;
-        }
+        body { background: #f4f7f6; font-family: 'Segoe UI', sans-serif; }
+        .card { border-radius: 15px; border: none; }
+        .stat-card { color: white; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); }
+        .bg-income { background: linear-gradient(45deg, #28a745, #85e085); }
+        .bg-expense { background: linear-gradient(45deg, #dc3545, #ff6b6b); }
+        .bg-balance { background: linear-gradient(45deg, #007bff, #66b2ff); }
+        
+        /* Gaya Kartu Navigasi */
+        .nav-card { transition: 0.2s; cursor: pointer; text-decoration: none !important; }
+        .nav-card:hover { transform: scale(1.02); }
     </style>
 </head>
 
@@ -62,7 +32,7 @@
         <div class="container">
             <a class="navbar-brand fw-bold" href="dashboard.html"><i class="fa-solid fa-mosque me-2"></i>AL-IKHLAS</a>
             <div class="ms-auto">
-                <span class="text-white me-3"><i class="fa-solid fa-user-circle me-1"></i> <span id="welcomeText">Admin</span></span>
+                <span class="text-white me-3"><i class="fa-solid fa-user-circle me-1"></i> <span id="welcomeText">Memuat...</span></span>
                 <button onclick="logout()" class="btn btn-sm btn-outline-light">Logout</button>
             </div>
         </div>
@@ -71,33 +41,33 @@
     <div class="container">
         <div class="row g-3 mb-4">
             <div class="col-md-4">
-                <div class="card stat-card bg-income p-3">
-                    <div class="d-flex justify-content-between">
+                <div class="card stat-card bg-income p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <p class="mb-1">Total Pemasukan</p>
-                            <h3 class="fw-bold" id="totalPemasukan">Rp 0</h3>
+                            <p class="mb-1 opacity-75">Total Pemasukan</p>
+                            <h3 class="fw-bold mb-0" id="totalPemasukan">Rp 0</h3>
                         </div>
-                        <i class="fa-solid fa-arrow-down fs-1 opacity-50"></i>
+                        <i class="fa-solid fa-arrow-down-long fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card stat-card bg-expense p-3">
-                    <div class="d-flex justify-content-between">
+                <div class="card stat-card bg-expense p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <p class="mb-1">Total Pengeluaran</p>
-                            <h3 class="fw-bold" id="totalPengeluaran">Rp 0</h3>
+                            <p class="mb-1 opacity-75">Total Pengeluaran</p>
+                            <h3 class="fw-bold mb-0" id="totalPengeluaran">Rp 0</h3>
                         </div>
-                        <i class="fa-solid fa-arrow-up fs-1 opacity-50"></i>
+                        <i class="fa-solid fa-arrow-up-long fs-1 opacity-50"></i>
                     </div>
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="card stat-card bg-balance p-3">
-                    <div class="d-flex justify-content-between">
+                <div class="card stat-card bg-balance p-3 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center">
                         <div>
-                            <p class="mb-1">Saldo Kas</p>
-                            <h3 class="fw-bold" id="totalSaldo">Rp 0</h3>
+                            <p class="mb-1 opacity-75">Saldo Kas</p>
+                            <h3 class="fw-bold mb-0" id="totalSaldo">Rp 0</h3>
                         </div>
                         <i class="fa-solid fa-wallet fs-1 opacity-50"></i>
                     </div>
@@ -105,37 +75,37 @@
             </div>
         </div>
 
-        <div class="p-3 bg-white rounded shadow-sm d-flex gap-3 justify-content-center">
-            <a href="transaksi.html" class="btn btn-primary btn-lg px-3 fw-bold">
-                <i class="fa-solid fa-plus-circle me-2"></i>Transaksi
-            </a>
-            <a href="laporan.html" class="btn btn-outline-dark btn-lg px-3 fw-bold">
-                <i class="fa-solid fa-file-lines me-2"></i>Laporan
-            </a>
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <a href="transaksi.html" class="nav-card">
+                    <div class="card bg-primary text-white shadow-sm h-100">
+                        <div class="card-body p-4 text-center">
+                            <i class="fa-solid fa-cash-register fa-2x mb-2"></i>
+                            <h6 class="fw-bold mb-0">Input Transaksi</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-6">
+                <a href="laporan.html" class="nav-card">
+                    <div class="card bg-dark text-white shadow-sm h-100">
+                        <div class="card-body p-4 text-center">
+                            <i class="fa-solid fa-file-lines fa-2x mb-2"></i>
+                            <h6 class="fw-bold mb-0">Lihat Laporan</h6>
+                        </div>
+                    </div>
+                </a>
+            </div>
         </div>
-
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
-        let table; // Variabel global untuk DataTable
 
         $(document).ready(function() {
-            // Inisialisasi DataTable pertama kali
-            table = $('#mainTable').DataTable({
-                "order": [
-                    [0, "desc"]
-                ], // Urutkan berdasarkan tanggal terbaru
-                "pageLength": 10,
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json" // Bahasa Indonesia
-                }
-            });
             loadData();
         });
 
@@ -143,26 +113,25 @@
             fetch(scriptURL)
                 .then(res => res.json())
                 .then(data => {
-                    // Hapus data lama di DataTable
-                    table.clear();
-
-                    let totalIn = 0,
-                        totalOut = 0;
+                    let totalIn = 0, totalOut = 0;
 
                     data.forEach(t => {
-                        let isInc = t.jenis === 'pemasukan';
+                        let isInc = t.jenis.toString().toUpperCase() === 'PEMASUKAN';
                         let nom = parseInt(t.nominal) || 0;
+
                         if (isInc) totalIn += nom;
                         else totalOut += nom;
                     });
 
-                    table.draw();
-
+                    // Tampilkan data ke elemen dashboard
                     $("#totalPemasukan").text(formatRupiah(totalIn));
                     $("#totalPengeluaran").text(formatRupiah(totalOut));
                     $("#totalSaldo").text(formatRupiah(totalIn - totalOut));
                 })
-                .catch(err => console.error("Error loading data:", err));
+                .catch(err => {
+                    console.error("Error loading data:", err);
+                    Swal.fire("Error", "Gagal memuat data dari server", "error");
+                });
         }
 
         function formatRupiah(n) {
@@ -170,5 +139,4 @@
         }
     </script>
 </body>
-
 </html>
