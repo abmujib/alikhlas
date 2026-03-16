@@ -71,8 +71,10 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
+
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
+        const scriptURL = CONFIG.STRIP_URL;
 
         // Cek jika sudah login, langsung lempar ke pelanggan.html
         if (localStorage.getItem("token")) {

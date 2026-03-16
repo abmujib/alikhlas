@@ -150,16 +150,18 @@
         </div>
     </div>
 
+    <script src="js/config.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbycBmGazyzO0JzuPYDpSi8AUV45gA5pGKnlyuVj3Yh4cjZhljFfEdG54tIsXGMiNI1Fwg/exec";
+        const scriptURL = CONFIG.STRIP_URL;
         let table;
 
         $(document).ready(function() {
+            // Inisialisasi DataTable dengan sorting default DESC pada kolom 0
             table = $('#mainTable').DataTable({
                 "order": [[0, "desc"]],
                 "pageLength": 10,
@@ -175,6 +177,9 @@
                     table.clear();
                     let totalIn = 0, totalOut = 0;
 
+                    // Mengurutkan array data mentah dari yang terbaru berdasarkan tanggal
+                    data.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+
                     data.forEach(t => {
                         let isInc = t.jenis.toString().toUpperCase() === 'PEMASUKAN'; 
                         let nom = parseInt(t.nominal) || 0;
@@ -182,12 +187,16 @@
                         if (isInc) totalIn += nom;
                         else totalOut += nom;
 
+                        // Perbaikan Tanggal Berkuran 1 Hari: ambil string murni YYYY-MM-DD
+                        let tglMurni = t.tanggal.split("T")[0];
+
                         table.row.add([
-                            `<small>${formatTglTabel(t.tanggal)}</small>`,
+                            // hidden span untuk akurasi sorting DataTables
+                            `<span style="display:none;">${tglMurni}</span>${formatTglTabel(t.tanggal)}`,
                             `<b>${t.kategori}</b><br><small class="text-muted">${t.keterangan || '-'}</small>`,
                             `<span class="${isInc ? 'text-success' : 'text-danger'} fw-bold">${formatRupiah(nom)}</span>`,
                             `<div class="btn-group">
-                                <button class="btn btn-sm btn-light text-primary border" onclick="prepareEdit('${t.id}','${t.tanggal}','${t.jenis}','${t.kategori}','${nom}','${t.keterangan}')"><i class="fa fa-edit"></i></button>
+                                <button class="btn btn-sm btn-light text-primary border" onclick="prepareEdit('${t.id}','${tglMurni}','${t.jenis}','${t.kategori}','${nom}','${t.keterangan}')"><i class="fa fa-edit"></i></button>
                                 <button class="btn btn-sm btn-light text-danger border" onclick="deleteItem('${t.id}')"><i class="fa fa-trash"></i></button>
                             </div>`
                         ]);
@@ -196,8 +205,6 @@
                     table.draw();
                     $("#totalPemasukan").text(formatRupiah(totalIn));
                     $("#totalPengeluaran").text(formatRupiah(totalOut));
-                    
-                    // PERBAIKAN: Menggunakan formatSaldo untuk mendukung nilai negatif
                     $("#totalSaldo").text(formatSaldo(totalIn - totalOut));
                 })
                 .catch(err => console.error("Error loading data:", err));
@@ -237,8 +244,8 @@
 
         function prepareEdit(id, tgl, jenis, kat, nom, ket) {
             $("#transId").val(id);
-            let formattedDate = tgl.includes("T") ? tgl.split("T")[0] : tgl;
-            $("#tanggal").val(formattedDate);
+            // Menggunakan tgl yang sudah bersih (YYYY-MM-DD) tanpa konversi Date
+            $("#tanggal").val(tgl);
             $("#jenis").val(jenis);
             $("#kategori").val(kat);
             $("#nominal").val(nom);
@@ -281,16 +288,21 @@
             });
         }
 
-        // Fungsi format standar (pemasukan/pengeluaran selalu positif)
         function formatRupiah(n) { return "Rp " + Math.abs(n).toLocaleString('id-ID'); }
 
-        // Fungsi KHUSUS SALDO: Menampilkan tanda minus (-) jika hasil negatif
         function formatSaldo(n) {
             let prefix = n < 0 ? "- Rp " : "Rp ";
             return prefix + Math.abs(n).toLocaleString('id-ID');
         }
 
-        function formatTglTabel(s) { return s ? new Date(s).toLocaleDateString('id-ID') : "-"; }
+        function formatTglTabel(s) { 
+            if(!s) return "-";
+            // Memecah string manual untuk menghindari bug timezone (-1 hari)
+            let datePart = s.split("T")[0];
+            let p = datePart.split("-");
+            if(p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`; // Hasil: DD/MM/YYYY
+            return s;
+        }
     </script>
 </body>
 </html>
