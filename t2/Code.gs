@@ -3,7 +3,7 @@ const sheet = SS.getSheetByName("TRANSAKSI");
 const userSheet = SS.getSheetByName("USERS");
 
 function doGet() {
-  const data = sheet.getDataRange().getValues();
+  const data = sheet.getDataRange().getDisplayValues(); 
   const headers = data.shift();
   const result = data.map((row) => {
     let obj = {};
