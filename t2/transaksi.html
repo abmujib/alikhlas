@@ -18,9 +18,6 @@
         .card { border-radius: 15px; border: none; }
         .stat-card { color: white; transition: 0.3s; cursor: default; }
         .stat-card:hover { transform: translateY(-5px); }
-        .bg-income { background: linear-gradient(45deg, #28a745, #85e085); }
-        .bg-expense { background: linear-gradient(45deg, #dc3545, #ff6b6b); }
-        .bg-balance { background: linear-gradient(45deg, #007bff, #66b2ff); }
         .table-container { background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); }
         .btn-action { border-radius: 10px; font-weight: 600; }
     </style>
@@ -47,42 +44,6 @@
     </nav>
 
     <div class="container">
-        <div class="row g-3 mb-4">
-            <div class="col-md-4">
-                <div class="card stat-card bg-income p-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75">Total Pemasukan</p>
-                            <h3 class="fw-bold mb-0" id="totalPemasukan">Rp 0</h3>
-                        </div>
-                        <i class="fa-solid fa-arrow-down-long fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card stat-card bg-expense p-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75">Total Pengeluaran</p>
-                            <h3 class="fw-bold mb-0" id="totalPengeluaran">Rp 0</h3>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-long fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card stat-card bg-balance p-3 shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <p class="mb-1 opacity-75">Saldo Kas</p>
-                            <h3 class="fw-bold mb-0" id="totalSaldo">Rp 0</h3>
-                        </div>
-                        <i class="fa-solid fa-wallet fs-1 opacity-50"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm p-4">
@@ -203,9 +164,7 @@
                     });
 
                     table.draw();
-                    $("#totalPemasukan").text(formatRupiah(totalIn));
-                    $("#totalPengeluaran").text(formatRupiah(totalOut));
-                    $("#totalSaldo").text(formatSaldo(totalIn - totalOut));
+                    
                 })
                 .catch(err => console.error("Error loading data:", err));
         }
